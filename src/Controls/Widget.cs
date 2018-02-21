@@ -1,75 +1,70 @@
-﻿namespace CSharpCurses.Controls
-{
-    using System;
+﻿using System;
 
-    public class Widget
+namespace CSharpCurses.Controls
+{
+
+    public abstract class Widget
     {
         public int X { get; set; }
         public int Y { get; set; }
 
-        public ConsoleColor? Foreground
+        public virtual ConsoleColor? Foreground
         {
-            get => foreground;
+            get => _foreground;
             set
             {
-                if (foreground != value)
+                if (_foreground != value)
                 {
-                    foreground = value;
-                    requireDraw = true;
+                    _foreground = value;
+                    RequireDraw = true;
                 }
             }
         }
-        private ConsoleColor? foreground = null;
+        private ConsoleColor? _foreground;
 
-        public ConsoleColor? Background
+        public virtual ConsoleColor? Background
         {
-            get => background;
+            get => _background;
             set
             {
-                if (background != value)
+                if (_background != value)
                 {
-                    background = value;
-                    requireDraw = true;
+                    _background = value;
+                    RequireDraw = true;
                 }
             }
         }
-        private ConsoleColor? background = null;
+        private ConsoleColor? _background;
 
-        protected bool requireDraw = true;
+        protected bool RequireDraw = true;
 
         public Widget(int x, int y)
         {
-            this.X = x;
-            this.Y = y;
+            X = x;
+            Y = y;
         }
 
-        public void Draw(int x, int y)
+        public void Draw(int x, int y, bool force = false)
         {
-            if (requireDraw)
+            if (RequireDraw || force)
             {
-                var previousFg = Console.ForegroundColor;
-                var previousBg = Console.BackgroundColor;
+                ConsoleApp.PushState();
 
-                if (foreground.HasValue) Console.ForegroundColor = foreground.Value;
-                if (background.HasValue) Console.BackgroundColor = background.Value;
+                if (_foreground.HasValue) Console.ForegroundColor = _foreground.Value;
+                if (_background.HasValue) Console.BackgroundColor = _background.Value;
 
                 OnDraw(X + x, Y + y);
 
-                Console.ForegroundColor = previousFg;
-                Console.BackgroundColor = previousBg;
+                ConsoleApp.PopState();
 
-                requireDraw = false;
+                RequireDraw = false;
             }
         }
 
         public virtual void Update()
         {
-
         }
 
-        protected virtual void OnDraw(int x, int y)
-        {
-
-        }
+        protected abstract void OnDraw(int x, int y);
     }
 }

@@ -1,20 +1,9 @@
-﻿namespace CSharpCurses
+﻿using System;
+
+namespace CSharpCurses
 {
-    public static class StringExtensions
+    public static class Extensions
     {
-        public static string New(string str, int length)
-        {
-            return str + new string(' ', length - str.Length);
-        }
-
-        public static string EnsureLengthS(this string str, char insert, int length)
-        {
-            if (str.Length >= length)
-                return str;
-
-            return new string(insert, length - str.Length) + str;
-        }
-
         /// <summary>
         /// "Hello World " => "ello World H"
         /// </summary>
@@ -32,6 +21,22 @@
             var start = str.Length - count;
             var first = str.Substring(start, count);
             return str.Remove(start, count).Insert(0, first);
+        }
+
+        public static T[] Resize<T>(this T[] ts, int size, T def)
+        {
+            return Resize(ts, size, () => def);
+        }
+
+        public static T[] Resize<T>(this T[] ts, int size, Func<T> def)
+        {
+            var newBuffer = new T[size];
+            int i;
+            for (i = 0; i < Math.Min(ts.Length, size); i++)
+                newBuffer[i] = ts[i];
+            for (; i < newBuffer.Length; i++)
+                newBuffer[i] = def();
+            return newBuffer;
         }
     }
 }

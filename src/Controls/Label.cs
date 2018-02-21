@@ -1,35 +1,33 @@
-﻿namespace CSharpCurses.Controls
-{
-    using System;
+﻿using System;
 
+namespace CSharpCurses.Controls
+{
     public class Label : Widget
     {
         public string Text
         {
-            get => text;
+            get => _text;
             set
             {
-                if (text != value)
+                if (_text != value)
                 {
-                    // TODO: Clear buffer
-                    text = value;
-                    requireDraw = true;
+                    _text = value.PadRight(_text.Length);
+                    RequireDraw = true;
                 }
             }
         }
-        private string text = string.Empty;
+        private string _text = string.Empty;
 
         public Label(int x, int y, string text)
             : base(x, y)
         {
-            this.Text = text;
+            Text = text;
         }
 
         protected override void OnDraw(int x, int y)
         {
-            base.OnDraw(x, y);
-
-            Terminal.Write(x, y, Text);
+            BufferManager.Logger.Log(Logger.Level.Info, $"Drew label '{Text}'.");
+            BufferManager.Write(x, y, Text);
         }
     }
 }

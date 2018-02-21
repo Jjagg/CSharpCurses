@@ -5,21 +5,21 @@
         public int Ticks { get; set; }
         public bool MoveRight { get; set; }
 
-        private int currentTicks = 0;
+        private int _currentTicks;
 
         public ScrollingLabel(int x, int y, string text, bool moveRight = false, int ticks = 30)
             : base(x, y, text)
         {
-            this.MoveRight = moveRight;
-            this.Ticks = ticks;
+            MoveRight = moveRight;
+            Ticks = ticks;
         }
 
         public override void Update()
         {
-            currentTicks++;
-            if (currentTicks > Ticks)
+            _currentTicks++;
+            if (_currentTicks > Ticks)
             {
-                currentTicks -= Ticks;
+                _currentTicks -= Ticks;
                 if (MoveRight)
                 {
                     Text = Text.MoveRight();
